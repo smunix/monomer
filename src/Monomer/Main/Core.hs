@@ -407,12 +407,9 @@ renderWidgets !window renderer clearColor wenv widgetRoot = do
   liftIO $ widgetRender (widgetRoot ^. L.widget) wenv widgetRoot renderer
   liftIO $ endFrame renderer
 
+  liftIO $ renderIsolated renderer winW winH
   liftIO $ renderRawTasks renderer
-
-  liftIO $ beginFrame renderer winW winH
-  liftIO $ renderOverlays renderer
-  liftIO $ endFrame renderer
-
+  liftIO $ renderOverlays renderer winW winH
   liftIO $ renderRawOverlays renderer
 
   SDL.glSwapWindow window

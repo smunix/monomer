@@ -747,6 +747,7 @@
 
 Next
   - Think about rendering with custom beginFrame for some widgets
+    - Try rendering a transparent box. Maybe isolated can be avoided.
     - Could work for rounded images.
   - Document themes and how widgets use them.
   - Avoid building examples when used as a library.

@@ -217,6 +217,21 @@ data FontManager = FontManager {
   computeGlyphsPos :: Font -> FontSize -> Text -> Seq GlyphPos
 }
 
+-- https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Compositing
+data CompositeOperation
+  = CompSrcOver
+  | CompSrcIn
+  | CompSrcOut
+  | CompSrcATop
+  | CompDstOver
+  | CompDstIn
+  | CompDstOut
+  | CompDstATop
+  | CompLighter
+  | CompCopy
+  | CompXOR
+  deriving (Eq, Show)
+
 -- | Low level rendering definitions.
 data Renderer = Renderer {
   -- | Begins a new frame.
@@ -231,11 +246,22 @@ data Renderer = Renderer {
   saveContext :: IO (),
   -- | Restores a previously saved context.
   restoreContext :: IO (),
-  -- | Creates an overlay. These are rendered after the regular frame has been
-  -- | displayed. Useful, for instance, for a dropdown or context menu.
+  {-|
+  Creates isolated render tasks. These are rendered after the regular frame has
+  been displayed, but before overlays. This allow widgets to perform composite
+  operations, since those work based on the color channel and parent widgets may
+  have already rendered before children do.
+  -}
+  createIsolated :: IO () -> IO (),
+  -- | Renders the added isolated render tasks and clears them.
+  renderIsolated :: Double -> Double -> IO (),
+  {-|
+  Creates an overlay. These are rendered after the regular frame has been
+  displayed. Useful, for instance, for a dropdown or context menu.
+  -}
   createOverlay :: IO () -> IO (),
   -- | Renders the added overlays and clears them.
-  renderOverlays :: IO (),
+  renderOverlays :: Double -> Double -> IO (),
   {-|
   Creates a render task which does not rely on the abstractions provided by the
   Renderer. Well suited for pure OpenGL/Vulkan/Metal.
@@ -265,6 +291,8 @@ data Renderer = Renderer {
   setRotation :: Double -> IO (),
   -- | Applies the given alpha to all further drawing operations.
   setGlobalAlpha :: Double -> IO (),
+  -- | Sets the active composite operation. Defaults to `CompSrcOver`.
+  setCompositeOperation :: CompositeOperation -> IO (),
   -- | Draws an active path as a non filled stroke.
   stroke :: IO (),
   -- | Sets the color of the next stroke actions.

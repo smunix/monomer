@@ -278,6 +278,9 @@ makeImage imgSource config state = widget where
     singleGetSizeReq = getSizeReq,
     singleRender = render
   }
+--  widget = baseWidget {
+--    widgetRender = render
+--  }
 
   isImageMem = case imgSource of
     ImageMem{} -> True
@@ -346,10 +349,34 @@ makeImage imgSource config state = widget where
       | otherwise = expandSize h factorH
 
   render wenv node renderer = do
-    when (imageLoaded && imageExists) $
-      drawImage renderer imgPath imageRect alpha
-    when (imageLoaded && not imageExists) $
-      drawNewImage renderer imgPath imageRect alpha imgSize imgBytes imgFlags
+      setCompositeOperation renderer CompDstOut
+      drawEllipse renderer contentArea (Just $ rgb 0 0 255)
+      setCompositeOperation renderer CompDstATop 
+      drawRect renderer contentArea (Just $ rgb 255 0 0) Nothing
+--      drawInScissor renderer True (wenv ^. L.viewport) $ do
+--        when (imageLoaded && imageExists) $
+--          drawImage renderer imgPath imageRect alpha
+--        when (imageLoaded && not imageExists) $
+--          drawNewImage renderer imgPath imageRect alpha imgSize imgBytes imgFlags
+{-
+--    createIsolated renderer $ do
+  --    drawRect renderer contentArea (Just $ rgb 255 0 0) Nothing
+      --drawEllipse renderer contentArea (Just $ rgba 0 0 0 0)
+--      setCompositeOperation renderer CompSrcOut
+
+      -- Ver de pasar solo wenv ^. L.viewport a drawImage (hay que agregar parámetro)
+      --drawEllipse renderer contentArea (Just $ rgb 0 0 0)
+      setCompositeOperation renderer CompSrcOut
+      drawRect renderer (wenv ^. L.viewport) (Just $ rgb 255 0 0) Nothing
+
+  --    drawInScissor renderer True (wenv ^. L.viewport) $ do
+  --      when (imageLoaded && imageExists) $
+  --        drawImage renderer imgPath imageRect alpha
+  --      when (imageLoaded && not imageExists) $
+  --        drawNewImage renderer imgPath imageRect alpha imgSize imgBytes imgFlags
+    
+      setCompositeOperation renderer CompSrcOver
+-}
     where
       style = activeStyle wenv node
       contentArea = getContentArea style node

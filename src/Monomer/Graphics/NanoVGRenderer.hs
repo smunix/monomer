@@ -18,6 +18,7 @@ module Monomer.Graphics.NanoVGRenderer (makeRenderer) where
 import Control.Lens ((&), (^.), (.~))
 import Control.Monad (foldM, forM_, unless, when)
 import Data.Default
+import Data.Foldable (traverse_)
 import Data.Functor ((<&>))
 import Data.IORef
 import Data.List (foldl')
@@ -68,6 +69,7 @@ data ImageReq = ImageReq {
 }
 
 data Env = Env {
+  isolated :: Seq (IO ()),
   overlays :: Seq (IO ()),
   tasksRaw :: Seq (IO ()),
   overlaysRaw :: Seq (IO ()),
@@ -102,6 +104,7 @@ makeRenderer fonts dpr = do
     putStrLn "Could not find any valid fonts. Text will fail to be displayed."
 
   envRef <- newIORef $ Env {
+    isolated = Seq.empty,
     overlays = Seq.empty,
     tasksRaw = Seq.empty,
     overlaysRaw = Seq.empty,
@@ -128,6 +131,11 @@ newRenderer c rdpr envRef = Renderer {..} where
   endFrame =
     VG.endFrame c
 
+  doInFrame w h action = do
+    beginFrame w h
+    action
+    endFrame
+
   beginPath =
     VG.beginPath c
 
@@ -141,13 +149,26 @@ newRenderer c rdpr envRef = Renderer {..} where
   restoreContext =
     VG.restore c
 
+  -- Isolated
+  createIsolated iso = do
+    modifyIORef envRef $ \env -> env {
+      isolated = isolated env |> iso
+    }
+
+  renderIsolated w h = do
+    env <- readIORef envRef
+    traverse_ (doInFrame w h) (isolated env)
+    writeIORef envRef env {
+      isolated = Seq.empty
+    }
+
   -- Overlays
-  createOverlay overlay =
+  createOverlay overlay = do
     modifyIORef envRef $ \env -> env {
       overlays = overlays env |> overlay
     }
 
-  renderOverlays = do
+  renderOverlays w h = doInFrame w h $ do
     env <- readIORef envRef
     sequence_ $ overlays env
     writeIORef envRef env {
@@ -210,6 +231,10 @@ newRenderer c rdpr envRef = Renderer {..} where
     VG.globalAlpha c calpha
     where
       calpha = max 0 . min 1 $ realToFrac alpha
+
+  -- Composite operation
+  setCompositeOperation comp = do
+    VG.globalCompositeOperation c (compToNVComp comp)
 
   -- Strokes
   stroke =
@@ -466,3 +491,16 @@ rectToCRect (Rect x y w h) dpr = CRect cx cy cw ch where
   cy = realToFrac $ y * dpr
   ch = realToFrac $ h * dpr
   cw = realToFrac $ w * dpr
+
+compToNVComp :: CompositeOperation -> VG.CompositeOperation
+compToNVComp CompSrcOver = VG.SourceOver
+compToNVComp CompSrcIn = VG.SourceIn
+compToNVComp CompSrcOut = VG.SourceOut
+compToNVComp CompSrcATop = VG.Atop
+compToNVComp CompDstOver = VG.DestinationOver
+compToNVComp CompDstIn = VG.DestinationIn
+compToNVComp CompDstOut = VG.DestinationOut
+compToNVComp CompDstATop = VG.DestinationAtop
+compToNVComp CompLighter = VG.Lighter
+compToNVComp CompCopy = VG.Copy
+compToNVComp CompXOR = VG.Xor
