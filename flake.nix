@@ -6,7 +6,7 @@
   };
   outputs = { self, nixpkgs, flake-utils }:
     with flake-utils.lib;
-    eachSystem [ "x86_64-linux" ] (system:
+    eachSystem [ "x86_64-darwin" ] (system:
       let
         version = with nixpkgs.lib;
           "${substring 0 8 self.lastModifiedDate}.${self.shortRev or "dirty"}";
