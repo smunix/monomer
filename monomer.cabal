@@ -26,6 +26,15 @@ build-type:     Simple
 extra-source-files:
     README.md
     ChangeLog.md
+data-files:
+    assets/fonts/remixicon.ttf
+    assets/fonts/Roboto-Bold.ttf
+    assets/fonts/Roboto-Italic.ttf
+    assets/fonts/Roboto-Medium.ttf
+    assets/fonts/Roboto-Regular.ttf
+    assets/images/monomer-readme.png
+    assets/images/red-button-hover.png
+    assets/images/red-button.png
 
 source-repository head
   type: git
