@@ -18,6 +18,8 @@ import Widgets.CirclesGrid
 
 import qualified Monomer.Lens as L
 
+import Paths_monomer
+
 type GenerativeWenv = WidgetEnv GenerativeModel GenerativeEvt
 type GenerativeNode = WidgetNode GenerativeModel GenerativeEvt
 
@@ -95,19 +97,20 @@ handleEvent wenv node model evt = case evt of
   GenerativeInit -> [setFocusOnKey wenv "activeType"]
 
 main :: IO ()
-main = do
-  startApp model handleEvent buildUI config
+main = config >>= startApp model handleEvent buildUI
   where
     model = GenerativeModel CirclesGrid False def def
-    config = [
-      appWindowTitle "Generative",
-      appTheme darkTheme,
-      appFontDef "Regular" "./assets/fonts/Roboto-Regular.ttf",
-      appInitEvent GenerativeInit
-      ]
+    config = do
+      appFontDef'Regular <- appFontDef "Regular" <$> getDataFileName "assets/fonts/Roboto-Regular.ttf"
+      return
+        [ appWindowTitle "Generative",
+          appTheme darkTheme,
+          appFontDef'Regular,
+          appInitEvent GenerativeInit
+        ]
 
 seedList :: [Maybe Int]
-seedList = Nothing : (Just <$> [0..100])
+seedList = Nothing : (Just <$> [0 .. 100])
 
 seedDesc :: Maybe Int -> Text
 seedDesc Nothing = "Random"
