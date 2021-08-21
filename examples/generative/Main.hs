@@ -6,7 +6,7 @@ import Control.Lens
 import Data.Default
 import Data.List (intersperse)
 import Data.Maybe
-import Data.Text (Text)
+import Data.Text (Text, pack)
 import TextShow
 
 import Monomer
@@ -101,7 +101,7 @@ main = config >>= startApp model handleEvent buildUI
   where
     model = GenerativeModel CirclesGrid False def def
     config = do
-      appFontDef'Regular <- appFontDef "Regular" <$> getDataFileName "assets/fonts/Roboto-Regular.ttf"
+      appFontDef'Regular <- (appFontDef "Regular" . pack) <$> getDataFileName "assets/fonts/Roboto-Regular.ttf"
       return
         [ appWindowTitle "Generative",
           appTheme darkTheme,
