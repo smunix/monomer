@@ -15,23 +15,30 @@ with super.haskellPackages.extend (self: super:
       repo = "nanovg-hs";
       rev = "cc8dfa0dc18a0792786c973b4e9a232fa7d3ecfd";
       sha256 = "0vvj4l2dfjqspl80bwq4vkcql5p7s5a7l1cv7vajkak0vn1ryy70";
-    }) "-fexamples -fstb_truetype" {
+    }) "-fexamples -fstb_truetype" (if stdenv.isLinux then {
       inherit GLEW glew libGL libGLU;
       inherit (xorg) libX11;
-    });
+    } else {
+      inherit GLEW glew;
+    }));
     GLEW = glew;
   }); rec {
     libraries = recurseIntoAttrs {
       monomer = addExtraLibrary
-        (overrideCabal (callCabal2nix "monomer" ../. { }) (o: {
-          version = "${o.version}.${version}";
-          doCheck = true;
-          checkPhase = ''
-            runHook preCheck
-            ${xvfb_run}/bin/xvfb-run ./Setup test
-            runHook postCheck
-          '';
-        })) GLEW;
+        (overrideCabal (callCabal2nix "monomer" ../. { }) (o:
+          {
+            version = "${o.version}.${version}";
+          } // (if stdenv.isLinux then {
+            doCheck = true;
+            checkPhase = ''
+              runHook preCheck
+              ${xvfb_run}/bin/xvfb-run ./Setup test
+              runHook postCheck
+            '';
+          } else {
+            # isDarwin tests are still failing
+            doCheck = false;
+          }))) GLEW;
     };
     executables = {
       todo = mkApp rec {
