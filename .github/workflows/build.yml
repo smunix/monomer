@@ -29,3 +29,9 @@ jobs:
         with:
           name: ${{ matrix.os }}-monomer.log
           path: ${{ matrix.os }}-monomer.log
+      - name: upload ${{ matrix.os }}-monomer-test.log
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.os }}-monomer-test
+          path: dist/test/
