@@ -398,7 +398,7 @@ findByPath = describe "findByPath" $ do
 
   it "should return item number 9 when starting from the second level" $ do
     let res = wni (Seq.fromList [0, 0, 0, 0, 2, 2, 0, 1])
-    roundRectUnits <$> res ^? _Just . L.viewport `shouldBe` Just (Rect 427 340 213 20)
+    roundRectUnits <$> res ^? _Just . L.viewport `shouldBe` Just (Rect 42 340 213 20)
 
   where
     wenv = mockWenvEvtUnit def
