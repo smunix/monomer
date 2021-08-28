@@ -1,0 +1,82 @@
+cradle:
+  cabal:
+    - path: "./src"
+      component: "lib:monomer"
+
+    - path: "./examples/books/Main.hs"
+      component: "monomer:exe:books"
+
+    - path: "./examples/books/BookTypes.hs"
+      component: "monomer:exe:books"
+
+    - path: "./examples/books/Paths_monomer.hs"
+      component: "monomer:exe:books"
+
+    - path: "./examples/generative/Main.hs"
+      component: "monomer:exe:generative"
+
+    - path: "./examples/generative/GenerativeTypes.hs"
+      component: "monomer:exe:generative"
+
+    - path: "./examples/generative/Widgets/BoxesPalette.hs"
+      component: "monomer:exe:generative"
+
+    - path: "./examples/generative/Widgets/CirclesGrid.hs"
+      component: "monomer:exe:generative"
+
+    - path: "./examples/generative/Paths_monomer.hs"
+      component: "monomer:exe:generative"
+
+    - path: "./examples/ticker/Main.hs"
+      component: "monomer:exe:ticker"
+
+    - path: "./examples/ticker/BinanceTypes.hs"
+      component: "monomer:exe:ticker"
+
+    - path: "./examples/ticker/TickerTypes.hs"
+      component: "monomer:exe:ticker"
+
+    - path: "./examples/ticker/Paths_monomer.hs"
+      component: "monomer:exe:ticker"
+
+    - path: "./examples/todo/Main.hs"
+      component: "monomer:exe:todo"
+
+    - path: "./examples/todo/TodoTypes.hs"
+      component: "monomer:exe:todo"
+
+    - path: "./examples/todo/Paths_monomer.hs"
+      component: "monomer:exe:todo"
+
+    - path: "./examples/tutorial/Main.hs"
+      component: "monomer:exe:tutorial"
+
+    - path: "./examples/tutorial/Tutorial01_Basics.hs"
+      component: "monomer:exe:tutorial"
+
+    - path: "./examples/tutorial/Tutorial02_Styling.hs"
+      component: "monomer:exe:tutorial"
+
+    - path: "./examples/tutorial/Tutorial03_LifeCycle.hs"
+      component: "monomer:exe:tutorial"
+
+    - path: "./examples/tutorial/Tutorial04_Tasks.hs"
+      component: "monomer:exe:tutorial"
+
+    - path: "./examples/tutorial/Tutorial05_Producers.hs"
+      component: "monomer:exe:tutorial"
+
+    - path: "./examples/tutorial/Tutorial06_Composite.hs"
+      component: "monomer:exe:tutorial"
+
+    - path: "./examples/tutorial/Tutorial07_CustomWidget.hs"
+      component: "monomer:exe:tutorial"
+
+    - path: "./examples/tutorial/Tutorial08_Themes.hs"
+      component: "monomer:exe:tutorial"
+
+    - path: "./examples/tutorial/Paths_monomer.hs"
+      component: "monomer:exe:tutorial"
+
+    - path: "./test/unit"
+      component: "monomer:test:monomer-test"
